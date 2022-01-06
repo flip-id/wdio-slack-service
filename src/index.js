@@ -2,6 +2,8 @@ const { IncomingWebhook } = require(`@slack/webhook`);
 const { failedAttachment, passedAttachment } = require(`./util`);
 const {AUTHOR_NAME} = require('../../../config/constant.conf');
 const {getPICMapper} = require('../../../constants/global.constant');
+const dotenv = require('dotenv');
+dotenv.config();
 
 class SlackService {
 
@@ -62,6 +64,10 @@ class SlackService {
             this.attachment.push({author_name: `Triggered by ${AUTHOR_NAME}, cc ${getPICMapper(AUTHOR_NAME)}`, color: `#edf8ae` });
         }
         if (this.failedTests > 0 && this.options.notifyOnlyOnFailure === true) {
+            const CI_PIPELINE_URL = process.env.CI_PIPELINE_URL;
+            if (CI_PIPELINE_URL) {
+                this.attachment.push({author_name: `Pipeline: <${CI_PIPELINE_URL}|Click Here>`, color: `#22b9f1` });
+            }
             await this.webhook.send({ attachments: this.attachment });
             return;
         }
