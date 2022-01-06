@@ -30,16 +30,16 @@ class SlackService {
         ++this.tests;
         if (this.tests <= 1 && !this.testNameFull) {
             this.testNameFull = test.parent ??  test.fullName.replace(test.description, '');
+            const CI_PIPELINE_URL = process.env.CI_PIPELINE_URL;
+            const CI_JOB_URL = process.env.CI_JOB_URL;
+            if (CI_PIPELINE_URL) {
+                this.attachment.push({author_name: `Pipeline: <${CI_PIPELINE_URL}|Click Here>`, color: `#22b9f1` });
+            }
+            if (CI_JOB_URL) {
+                this.attachment.push({author_name: `Jobs Url: <${CI_JOB_URL}|Click Here> or Download the Report <${CI_JOB_URL}/artifacts/download|Here>`, color: `#22b9f1` });
+            }
         }
         this.testTitle = test.title ?? test.description;
-        const CI_PIPELINE_URL = process.env.CI_PIPELINE_URL;
-        const CI_JOB_URL = process.env.CI_JOB_URL;
-        if (CI_PIPELINE_URL) {
-            this.attachment.push({author_name: `Pipeline: <${CI_PIPELINE_URL}|Click Here>`, color: `#22b9f1` });
-        }
-        if (CI_JOB_URL) {
-            this.attachment.push({author_name: `Jobs Url: <${CI_JOB_URL}|Click Here> or Download the Report <${CI_JOB_URL}/artifacts/download|Here>`, color: `#22b9f1` });
-        }
     }
 
     async afterTest(test, context, results) {
@@ -69,7 +69,7 @@ class SlackService {
         this.attachment[0].color = `#ffc107`;
         this.attachment.push({author_name: `Total tests: ${this.tests} | Total passed: ${this.passedTests} | Total failed: ${this.failedTests}`, color: `#4366c7` });
         if (AUTHOR_NAME) {
-            this.attachment.push({author_name: `Triggered by ${AUTHOR_NAME}, cc ${getPICMapper(AUTHOR_NAME)}`, color: `#edf8ae` });
+            this.attachment.push({pretext: `Triggered by ${AUTHOR_NAME}, cc ${getPICMapper(AUTHOR_NAME)}`, color: `#edf8ae` });
         }
         if (this.failedTests > 0 && this.options.notifyOnlyOnFailure === true) {
             await this.webhook.send({ attachments: this.attachment });
