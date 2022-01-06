@@ -3,7 +3,7 @@ const { failedAttachment, passedAttachment } = require(`./util`);
 const {AUTHOR_NAME} = require('../../../config/constant.conf');
 const {getPICMapper} = require('../../../constants/global.constant');
 const dotenv = require('dotenv');
-dotenv.config({ path: '../../../.env' });
+dotenv.config();
 
 class SlackService {
 
@@ -58,6 +58,7 @@ class SlackService {
 
     async after() {
         const CI_PIPELINE_URL = process.env.CI_PIPELINE_URL;
+        console.warn('HAHHAH', CI_PIPELINE_URL);
         this.attachment[0].title = `${this.testNameFull}`;
         this.attachment[0].color = `#ffc107`;
         this.attachment.push({author_name: `Total tests: ${this.tests} | Total passed: ${this.passedTests} | Total failed: ${this.failedTests}`, color: `#4366c7` });
