@@ -58,10 +58,10 @@ class SlackService {
 
     async after() {
         const CI_PIPELINE_URL = process.env.CI_PIPELINE_URL;
-        console.log('all', process.env)
         this.attachment[0].title = `${this.testNameFull}`;
         this.attachment[0].color = `#ffc107`;
         this.attachment.push({author_name: `Total tests: ${this.tests} | Total passed: ${this.passedTests} | Total failed: ${this.failedTests}`, color: `#4366c7` });
+        this.attachment.push({author_name: `env ${JSON.parse(process.env)}`, color: `#4366c7` });
         if (AUTHOR_NAME) {
             this.attachment.push({author_name: `Triggered by ${AUTHOR_NAME}, cc ${getPICMapper(AUTHOR_NAME)}`, color: `#edf8ae` });
         }
