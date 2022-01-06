@@ -58,17 +58,18 @@ class SlackService {
 
     async after() {
         const CI_PIPELINE_URL = process.env.CI_PIPELINE_URL;
-        console.warn('HAHHAH', CI_PIPELINE_URL);
+        const CI_JOB_URL = process.env.CI_JOB_URL;
         this.attachment[0].title = `${this.testNameFull}`;
         this.attachment[0].color = `#ffc107`;
         this.attachment.push({author_name: `Total tests: ${this.tests} | Total passed: ${this.passedTests} | Total failed: ${this.failedTests}`, color: `#4366c7` });
-        this.attachment.push({author_name: `ANJAYY` });
-        this.attachment.push({author_name: `env ${JSON.parse(process.env)}`, color: `#4366c7` });
         if (AUTHOR_NAME) {
             this.attachment.push({author_name: `Triggered by ${AUTHOR_NAME}, cc ${getPICMapper(AUTHOR_NAME)}`, color: `#edf8ae` });
         }
         if (CI_PIPELINE_URL) {
             this.attachment.push({author_name: `Pipeline: <${CI_PIPELINE_URL}|Click Here>`, color: `#22b9f1` });
+        }
+        if (CI_JOB_URL) {
+            this.attachment.push({author_name: `Jobs Url: <${CI_JOB_URL}|Click Here>`, color: `#22b9f1` });
         }
         if (this.failedTests > 0 && this.options.notifyOnlyOnFailure === true) {
             await this.webhook.send({ attachments: this.attachment });
