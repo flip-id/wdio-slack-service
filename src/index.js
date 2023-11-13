@@ -1,7 +1,5 @@
 const { IncomingWebhook } = require(`@slack/webhook`);
 const { failedAttachment, passedAttachment } = require(`./util`);
-const {AUTHOR_NAME} = require('../../../config/constant.conf');
-const {getPICMapper} = require('../../../constants/global.constant');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -68,9 +66,6 @@ class SlackService {
         this.attachment[0].title = `${this.testNameFull}`;
         this.attachment[0].color = `#ffc107`;
         this.attachment.push({author_name: `Total tests: ${this.tests} | Total passed: ${this.passedTests} | Total failed: ${this.failedTests}`, color: `#4366c7` });
-        if (AUTHOR_NAME) {
-            this.attachment.push({pretext: `Triggered by ${AUTHOR_NAME}, cc ${getPICMapper(AUTHOR_NAME)}`, color: `#edf8ae` });
-        }
         if (this.failedTests > 0 && this.options.notifyOnlyOnFailure === true) {
             await this.webhook.send({ attachments: this.attachment });
             return;
